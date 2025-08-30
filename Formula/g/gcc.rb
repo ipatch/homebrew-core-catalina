@@ -54,6 +54,7 @@ class Gcc < Formula
   on_macos do
     # macOS make is too old, has intermittent parallel build issue
     depends_on "make" => :build
+    depends_on "texinfo"
   end
 
   on_linux do
