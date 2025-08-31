@@ -77,7 +77,36 @@ class Node < Formula
     sha256 "f9cc06ba9ac2dcb98d67c89cac119a005da12b4b24e30b4f689e60041b5b94aa"
   end
 
+  if MacOS.version <= :catalina
+    patch :p0 do
+      url "https://raw.githubusercontent.com/macports/macports-ports/refs/heads/master/lang/nodejs24/files/patch-add-pthread-qos-guard-for-older-macs.patch"
+      sha256 "e1d167483b67316223dba49b7c5cb690d1cf1b87819024eaf10e2bac21966ed5"
+    end
+
+    patch :p0 do
+      url "https://raw.githubusercontent.com/macports/macports-ports/refs/heads/master/lang/nodejs24/files/patch-common.gypi.diff"
+    sha256 "6eb578f4e220e0712e835224f07547482da0aa5679267f1c4333aa80447aae53"
+    end  
+  end
+
+
   def install
+
+    llvm = Formula["llvm"]
+
+    ENV["CC"] = "#{llvm.opt_bin}/clang"
+    ENV["CXX"] = "#{llvm.opt_bin}/clang++"
+
+    # Force use of LLVM's libc++ and include paths
+    ENV.append "CPPFLAGS", "-I#{llvm.opt_include}"
+    ENV.append "CXXFLAGS", "-I#{llvm.opt_include}/c++/v1"
+    ENV.append "LDFLAGS", "-L#{llvm.opt_lib}"
+    ENV.append "LDFLAGS", "-L#{llvm.opt_lib}/c++"
+    ENV.append "LDFLAGS", "-Wl,-rpath,#{llvm.opt_lib}"
+    ENV.append "LDFLAGS", "-Wl,-rpath,#{llvm.opt_lib}/c++"
+    # Explicitly link against LLVM's libc++
+    ENV.append "LDFLAGS", "-lc++"
+
     ENV.llvm_clang if OS.mac? && DevelopmentTools.clang_build_version <= 1699
 
     # The new linker crashed during LTO due to high memory usage.
