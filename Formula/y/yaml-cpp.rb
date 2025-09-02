@@ -24,7 +24,11 @@ class YamlCpp < Formula
   depends_on "cmake" => :build
 
   def install
-    args = ["-DYAML_BUILD_SHARED_LIBS=ON", "-DYAML_CPP_BUILD_TESTS=OFF"]
+    args = [
+      "-DYAML_BUILD_SHARED_LIBS=ON", 
+      "-DYAML_CPP_BUILD_TESTS=OFF",
+      "-DCMAKE_POLICY_VERSION_MINIMUM=3.5"
+    ]
 
     system "cmake", "-S", ".", "-B", "build", *args, *std_cmake_args
     system "cmake", "--build", "build"
