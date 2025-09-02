@@ -36,6 +36,7 @@ class OrocosKdl < Formula
   def install
     system "cmake", "-S", "orocos_kdl", "-B", "build",
                     "-DEIGEN3_INCLUDE_DIR=#{Formula["eigen"].opt_include}/eigen3",
+                    "-DCMAKE_POLICY_VERSION_MINIMUM=3.5",
                     *std_cmake_args
     system "cmake", "--build", "build"
     system "cmake", "--install", "build"
